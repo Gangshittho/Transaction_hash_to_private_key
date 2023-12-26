@@ -8,7 +8,7 @@ import requests
 curve = ecdsa.SECP256k1
 
 # Define the transaction hash
-transaction_hash = "00312169b2a68d3b12886a5abb667872daf8241623df86ef2694f58bf19c82bb"
+transaction_hash = "c8b13394284c08ac695a329e5300d07241cfad1e2d8f9574a38d37872bc05a05"
 
 # Fetch the transaction data from the Blockchain.com API
 url = f"https://blockchain.info/rawtx/{transaction_hash}"
@@ -39,7 +39,7 @@ print("public_key_bytes :",public_key_bytes)
 
 #public_key_hex
 hex_public_key = public_key_bytes.hex()
-print("hex_public_key :" ,hex_public_key) # prints "0300966a501218a8476bfe5145ec3230c983a54c85c7ed4e7040b2d8ee591cb24a"
+print("hex_public_key :" ,hex_public_key) # prints "03ab170c17a4d62870635a8811dcadcc1a4bbfdfe6a7e3d4f6bc9d6cfb5f2ab9a7"
 
 # Convert public key x coordinate to int
 public_key_x = int.from_bytes(public_key_bytes[:32], 'big')
