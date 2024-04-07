@@ -5,22 +5,26 @@ import ecdsa
 import requests
 
 # Define the curve used for Bitcoin
-curve = ecdsa.SECP256k1
+curve = ecdsa.SECP256k1  # Specify the elliptic curve for Bitcoin
 
 # Define the transaction hash
 transaction_hash = "c8b13394284c08ac695a329e5300d07241cfad1e2d8f9574a38d37872bc05a05"
 
-# Fetch the transaction data from the Blockchain.com API
+# Fetch the transaction data from the Blockchain.info API
 url = f"https://blockchain.info/rawtx/{transaction_hash}"
 response = requests.get(url)
+
+# If the request was successful, the status code will be 200
 if response.status_code != 200:
     print(f"Error: {response.status_code}")
     exit()
+
 try:
-    all_data = response.json()
+    all_data = response.json()  # Parse the JSON response
 except ValueError:
     print("Error: Invalid JSON data")
     exit()
+
 print([all_data])
 
 # Extract witness from the inputs
@@ -29,14 +33,14 @@ witness = all_data['inputs'][0]['witness']
 # Print the witness
 print("witness :", witness)
 
-witness_hex = witness
+witness_hex = witness  # Store the witness as a hexadecimal string
 
 # Convert hex to bytes
 witness_bytes = bytes.fromhex(witness_hex)
 print("witness :", witness_bytes)
 
 # Extract public key from witness bytes
-public_key_bytes = witness_bytes[-33:]
+public_key_bytes = witness_bytes[-33:]  # The last 33 bytes are the public key
 print("public_key_bytes :", public_key_bytes)
 
 # Convert public key x coordinate to int
@@ -73,10 +77,10 @@ print("public_key :", public_key)
 print("public_key_hex :", binascii.hexlify(public_key))
 
 # Create a public key object from the public key bytes
-public_key = ecdsa.VerifyingKey.from_string(public_key_bytes, curve=curve)
+public_key_obj = ecdsa.VerifyingKey.from_string(public_key_bytes, curve=curve)
 
 # Extract the y-coordinate from the public key
-y = int.from_bytes(public_key.pubkey.to_bytes(32, "compressed"), "big")
+y = int.from_bytes(public_key_obj.pubkey.to_bytes(32, "compressed"), "big")
 print("y ; ", y)
 
 # Convert the transaction hash to an integer
@@ -89,6 +93,7 @@ private_key = (n + 1 - y) % order
 print("private_key_int : ", private_key)
 print("private_key : ", hex(private_key)[2:])  # exclude the '0x' prefix
 
+# Function to convert the private key to Wallet Import Format (WIF)
 def private_key_to_wif(private_key):
     # Add prefix "80" to indicate a private key
     extended_key = "80" + private_key
@@ -114,7 +119,4 @@ def private_key_to_wif(private_key):
 wif = private_key_to_wif(hex(private_key)[2:])
 print("WIF format of private key: ", wif)
 
-# Convert the private key from hexadecimal to bytes
-private_key_bytes = bytes.fromhex(hex(private_key)[2:])
-
-# Create a signing key object from the private
+# Convert the private key from hexadec
